@@ -7,6 +7,7 @@ using Halite2.hlt;
 
 namespace Halite2
 {
+	public class World
 	{
 		GameMap gameMap;
 		List<Move> moveList;
@@ -43,9 +44,13 @@ namespace Halite2
 
 		private void Fight(Ship ship)
 		{
-			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
+			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId() && e.GetDockingStatus()!=Ship.DockingStatus.Undocked);
+			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
+				nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
 			Ship closeEnemy = nearEnemyShips.OrderBy(e => e.Key).First().Value;
-			ThrustMove moveEnemy = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 5);
+			ThrustMove moveEnemy = closeEnemy.GetDockingStatus() != Ship.DockingStatus.Undocked ?
+				                       Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1, 4) :
+				                       Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1);
 			moveList.Add(moveEnemy);
 		}
 		private bool Colonize(Ship ship)

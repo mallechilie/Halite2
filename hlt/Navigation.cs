@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Halite2.hlt
 {
-	public class Navigation
+	public static class Navigation
 	{
 		public static ThrustMove NavigateShipToDock(
 			GameMap gameMap,
@@ -62,7 +62,7 @@ namespace Halite2.hlt
 		}
 
 		public static ThrustMove NavigateShipTowardsTargetCustom(GameMap gameMap, Ship ship, Position target,
-		                                                         bool avoidObstacles, double safeZone, Entity[] closeEntities = null)
+		                                                         bool avoidObstacles, double safeZone, double safeZoneToTarget = 0,  Entity[] closeEntities = null)
 		{
 			if (closeEntities == null)
 				closeEntities =
@@ -73,29 +73,23 @@ namespace Halite2.hlt
 					Position newPosition = Collision.CircleIntersectNewPoint(ship, target, closeEntities[x], safeZone);
 					if (Equals(newPosition, target))
 						continue;
-					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone,
+					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone, 0,
 						closeEntities.Take(x + 1).ToArray());
 				}
 
-			return GoToTarget(ship, target);
+			return GoToTarget(ship, target, safeZoneToTarget);
 		} 
 
-		public static ThrustMove GoToTarget(Ship ship, Position newPosition, int minThrust = 0, int maxThrust = 7)
+		public static ThrustMove GoToTarget(Ship ship, Position newPosition, double safeZone = 0, int minThrust = 0, int maxThrust = 7)
 		{
 			double distance = ship.GetDistanceTo(newPosition);
 			int angle = ship.OrientTowardsInDeg(newPosition);
 
 			int thrust = maxThrust;
 			if (distance < maxThrust)
-			{
-				// Do not round up, since overshooting might cause collision.
-				thrust = (int)distance;
-			}
+				thrust = (int) (distance - safeZone);
 			if (thrust < minThrust)
-			{
-				// Do not round up, since overshooting might cause collision.
 				thrust = minThrust;
-			}
 
 			return new ThrustMove(ship, angle, thrust);
 		}
