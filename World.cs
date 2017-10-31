@@ -60,10 +60,12 @@ namespace Halite2
 		}
 		private Entity FindTarget(Ship ship)
 		{
+			DebugLog.AddLog("Start FindTarget(Ship)");
 			Planet closestPlanet = FindPlanet(ship);
 			Planet emptyPlanet = FindEmptyPlanet(ship);
 			Ship dockedEnemy = FindDockedEnemy(ship);
 			Ship closeEnemy = FindEnemy(ship);
+			DebugLog.AddLog("Found targets");
 
 			Dictionary<Entity, double> targets = new Dictionary<Entity, double>();
 
@@ -75,6 +77,7 @@ namespace Halite2
 				targets.Add(dockedEnemy, ship.GetDistanceTo(dockedEnemy));
 			if (closeEnemy != null)
 				targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 1.5);
+			DebugLog.AddLog("Added targets");
 
 			return targets.OrderBy(kvp => kvp.Value).First().Key;
 		}
