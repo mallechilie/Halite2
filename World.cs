@@ -89,8 +89,8 @@ namespace Halite2
 					return;
 				}
 
-				if (skipDouble && gameMap.GetAllShips().Any(s => !Equals(ship, s) && s.GetOwner()==gameMap.GetMyPlayerId() && Equals(s.Target, planet) && s.GetDockingStatus()==Ship.DockingStatus.Undocked))
-					continue;
+				//if (skipDouble && gameMap.GetAllShips().Any(s => !Equals(ship, s) && s.GetOwner()==gameMap.GetMyPlayerId() && Equals(s.Target, planet) && s.GetDockingStatus()==Ship.DockingStatus.Undocked))
+				//	continue;
 
 				ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
 				if (newThrustMove != null)
