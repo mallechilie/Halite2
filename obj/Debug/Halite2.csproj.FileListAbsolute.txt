@@ -1,0 +1,18 @@
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\bin\Debug\Halite2.exe.config
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\bin\Debug\Halite2.exe
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\bin\Debug\Halite2.pdb
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\obj\Debug\Halite2.csprojResolveAssemblyReference.cache
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\obj\Debug\Halite2.exe
+C:\Users\Michiel\Downloads\Halite2_CSharp_Windows\Halite2\obj\Debug\Halite2.pdb
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\bin\Debug\Halite2.exe.config
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\bin\Debug\Halite2.exe
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\bin\Debug\Halite2.pdb
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\obj\Debug\Halite2.csprojResolveAssemblyReference.cache
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\obj\Debug\Halite2.exe
+C:\Users\Reus\Documents\Visual Studio 2017\Projects\Halite2\obj\Debug\Halite2.pdb
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\bin\Debug\Halite2.exe.config
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\obj\Debug\Halite2.exe
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\obj\Debug\Halite2.pdb
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\bin\Debug\Halite2.exe
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\bin\Debug\Halite2.pdb
+C:\Users\Michiel\Documents\Visual Studio 2015\Projects\Halite2\obj\Debug\Halite2.csprojResolveAssemblyReference.cache
