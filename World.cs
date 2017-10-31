@@ -23,7 +23,7 @@ namespace Halite2
 		public List<Move> DoTurn()
 		{
 			StartTurn();
-			bool skipDouble = gameMap.GetAllShips().Count(ship => ship.GetOwner()==gameMap.GetMyPlayerId()) < 30;
+			//bool skipDouble = gameMap.GetAllShips().Count(ship => ship.GetOwner()==gameMap.GetMyPlayerId()) < 30;
 			foreach (Ship ship in gameMap.GetMyPlayer().GetShips().Values)
 			{
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
@@ -33,7 +33,7 @@ namespace Halite2
 					continue;
 
 				if (true)//Colonize(ship))
-					ColonizePlanet(ship, skipDouble);
+					ColonizePlanet(ship, false);
 				else
 					Fight(ship);
 			}
@@ -66,7 +66,7 @@ namespace Halite2
 		}
 		private void ColonizePlanet(Ship ship, bool skipDouble)
 		{
-			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
 			for (int x = 0; x < planets.Length; x++)
 			{
 				Planet planet = planets[x];
