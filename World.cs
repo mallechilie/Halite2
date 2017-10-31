@@ -69,14 +69,14 @@ namespace Halite2
 
 			Dictionary<Entity, double> targets = new Dictionary<Entity, double>();
 
-			if (closestPlanet != null)
-				targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet) * 1.5);
-			if (emptyPlanet != null)
+			if (emptyPlanet != null )
 				targets.Add(emptyPlanet, ship.GetDistanceTo(emptyPlanet));
+			if (closestPlanet != null&& !Equals(emptyPlanet, closestPlanet))
+				targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet) * 1.5);
 			if (dockedEnemy != null)
 				targets.Add(dockedEnemy, ship.GetDistanceTo(dockedEnemy));
-			if (closeEnemy != null)
-				targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 1.5);
+			if (closeEnemy != null && !Equals(closeEnemy, dockedEnemy))
+					targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 1.5);
 			DebugLog.AddLog("Added targets");
 
 			return targets.OrderBy(kvp => kvp.Value).First().Key;
