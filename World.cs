@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Halite2.hlt;
 
 namespace Halite2
 {
-	class World
+	internal class World
 	{
-		GameMap gameMap;
-		List<Move> moveList;
+		private GameMap gameMap;
+		private List<Move> moveList;
 
 
 		public World(string[] args)
@@ -35,7 +32,7 @@ namespace Halite2
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
 					continue;
 
-				if (Colonize(ship))
+				if (true)//Colonize(ship))
 					ColonizePlanet(ship, skipDouble);
 				else
 					Fight(ship);
@@ -69,8 +66,7 @@ namespace Halite2
 		}
 		private void ColonizePlanet(Ship ship, bool skipDouble)
 		{
-			var planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
-			//foreach (Planet planet in Planets)
+			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
 			for (int x = 0; x < planets.Length; x++)
 			{
 				Planet planet = planets[x];

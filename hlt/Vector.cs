@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Halite2.hlt
 {
-	class Vector : Position 
+	internal class Vector : Position 
 	{
 		public Vector(double xPos, double yPos) : base(xPos, yPos)
 		{
