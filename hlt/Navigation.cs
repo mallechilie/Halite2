@@ -62,7 +62,7 @@ namespace Halite2.hlt
 		}
 
 		public static ThrustMove NavigateShipTowardsTargetCustom(GameMap gameMap, Ship ship, Position target,
-		                                                         bool avoidObstacles, double safeZone, double safeZoneToTarget = 0, Entity[] closeEntities = null)
+		                                                         bool avoidObstacles, double safeZone, Entity[] closeEntities = null)
 		{
 			if (closeEntities == null)
 				closeEntities =
@@ -73,14 +73,14 @@ namespace Halite2.hlt
 					Position newPosition = Collision.CircleIntersectNewPoint(ship, target, closeEntities[x], safeZone);
 					if (Equals(newPosition, target))
 						continue;
-					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone, 0,
+					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone,
 						closeEntities.Take(x + 1).ToArray());
 				}
 
-			return GoToTarget(ship, target, safeZoneToTarget);
-		}
+			return GoToTarget(ship, target);
+		} 
 
-		public static ThrustMove GoToTarget(Ship ship, Position newPosition, double safeZone = 0, int minThrust = 0, int maxThrust = 7)
+		public static ThrustMove GoToTarget(Ship ship, Position newPosition, int minThrust = 0, int maxThrust = 7)
 		{
 			double distance = ship.GetDistanceTo(newPosition);
 			int angle = ship.OrientTowardsInDeg(newPosition);
@@ -89,7 +89,7 @@ namespace Halite2.hlt
 			if (distance < maxThrust)
 			{
 				// Do not round up, since overshooting might cause collision.
-				thrust = (int) (distance - safeZone);
+				thrust = (int)distance;
 			}
 			if (thrust < minThrust)
 			{

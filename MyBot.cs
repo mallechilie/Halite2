@@ -1,4 +1,5 @@
 ﻿using Halite2.hlt;
+using System.Collections.Generic;
 
 namespace Halite2
 {

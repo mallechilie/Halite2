@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Halite2.hlt;
 
 namespace Halite2
 {
-	internal class World
 	{
-		private GameMap gameMap;
-		private List<Move> moveList;
+		GameMap gameMap;
+		List<Move> moveList;
 
 
 		public World(string[] args)
@@ -23,7 +25,6 @@ namespace Halite2
 		public List<Move> DoTurn()
 		{
 			StartTurn();
-			//bool skipDouble = gameMap.GetMyPlayer().GetShips().Values.Count() < 30;
 			foreach (Ship ship in gameMap.GetMyPlayer().GetShips().Values)
 			{
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
@@ -32,8 +33,8 @@ namespace Halite2
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
 					continue;
 
-				if (true)//Colonize(ship))
-					ColonizePlanet(ship, false);
+				if (Colonize(ship))
+					ColonizePlanet(ship);
 				else
 					Fight(ship);
 			}
@@ -42,16 +43,9 @@ namespace Halite2
 
 		private void Fight(Ship ship)
 		{
-			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId() && e.GetDockingStatus()!=Ship.DockingStatus.Undocked);
-			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
-				nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
+			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
 			Ship closeEnemy = nearEnemyShips.OrderBy(e => e.Key).First().Value;
-
-			ThrustMove moveEnemy = closeEnemy.GetDockingStatus() != Ship.DockingStatus.Undocked ? 
-				Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1, 4) : 
-				Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1);
-
-			ship.Target = closeEnemy;
+			ThrustMove moveEnemy = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 5);
 			moveList.Add(moveEnemy);
 		}
 		private bool Colonize(Ship ship)
@@ -64,12 +58,14 @@ namespace Halite2
 			double closestShip = gameMap.NearbyShipsByDistance(ship, s => s.GetOwner() != gameMap.GetMyPlayerId()).Min(kvp => kvp.Key);
 			return closestPlanet < closestShip;
 		}
-		private void ColonizePlanet(Ship ship, bool skipDouble)
+		private void ColonizePlanet(Ship ship)
 		{
-			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			var planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			//foreach (Planet planet in Planets)
 			for (int x = 0; x < planets.Length; x++)
 			{
 				Planet planet = planets[x];
+
 				if (planet.IsOwned() && planet.GetOwner() != gameMap.GetMyPlayerId())
 				{
 					continue;
@@ -82,22 +78,17 @@ namespace Halite2
 				if (ship.CanDock(planet))
 				{
 					moveList.Add(new DockMove(ship, planet));
-					return;
+					break;
 				}
-
-				//if (skipDouble && gameMap.GetAllShips().Any(s => !Equals(ship, s) && s.GetOwner()==gameMap.GetMyPlayerId() && Equals(s.Target, planet) && s.GetDockingStatus()==Ship.DockingStatus.Undocked))
-				//	continue;
 
 				ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
 				if (newThrustMove != null)
 				{
-					ship.Target = planet;
 					moveList.Add(newThrustMove);
-					return;
+					break;
 				}
 
 			}
-			//ColonizePlanet(ship, false);
 		}
 		private void StartUndocking(Ship ship)
 		{

@@ -8,9 +8,8 @@ namespace Halite2.hlt
         private int dockedPlanet;
         private int dockingProgress;
         private int weaponCooldown;
-		public  Entity Target;
 
-		public Ship(int owner, int id, double xPos, double yPos,
+        public Ship(int owner, int id, double xPos, double yPos,
                     int health, DockingStatus dockingStatus, int dockedPlanet,
                     int dockingProgress, int weaponCooldown)
             : base(owner, id, xPos, yPos, health, Constants.SHIP_RADIUS)

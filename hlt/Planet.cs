@@ -19,9 +19,12 @@ namespace Halite2.hlt {
             this.dockedShips = dockedShips.AsReadOnly();
         }
 
-        public int RemainingProduction => remainingProduction;
+        public int RemainingProduction
+        {
+	        get { return remainingProduction; }
+        }
 
-        public int GetCurrentProduction() {
+	    public int GetCurrentProduction() {
             return currentProduction;
         }
 
