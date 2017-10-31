@@ -23,7 +23,7 @@ namespace Halite2
 		public List<Move> DoTurn()
 		{
 			StartTurn();
-			//bool skipDouble = gameMap.GetAllShips().Count(ship => ship.GetOwner()==gameMap.GetMyPlayerId()) < 30;
+			//bool skipDouble = gameMap.GetMyPlayer().GetShips().Values.Count() < 30;
 			foreach (Ship ship in gameMap.GetMyPlayer().GetShips().Values)
 			{
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
@@ -97,7 +97,7 @@ namespace Halite2
 				}
 
 			}
-			ColonizePlanet(ship, false);
+			//ColonizePlanet(ship, false);
 		}
 		private void StartUndocking(Ship ship)
 		{
