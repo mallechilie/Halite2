@@ -34,15 +34,12 @@ namespace Halite2
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
 					continue;
 
-				Entity Target = FindTarget(ship);
-				switch (Target)
+				Entity target = FindTarget(ship);
+				if (target is Ship )
+					Fight(ship, (Ship) target);
+				else if (target is Planet )
 				{
-					case Ship _:
-						Fight(ship, (Ship)Target);
-						break;
-					case Planet _:
-						ColonizePlanet(ship, (Planet)Target);
-						break;
+					ColonizePlanet(ship, (Planet) target);
 				}
 			}
 			return moveList;
@@ -64,16 +61,20 @@ namespace Halite2
 		private Entity FindTarget(Ship ship)
 		{
 			Planet closestPlanet = FindPlanet(ship);
-			Planet EmptyPlanet = FindEmptyPlanet(ship);
-			Ship DockedEnemy = FindDockedEnemy(ship);
-			Ship CloseEnemy = FindEnemy(ship);
+			Planet emptyPlanet = FindEmptyPlanet(ship);
+			Ship dockedEnemy = FindDockedEnemy(ship);
+			Ship closeEnemy = FindEnemy(ship);
 
 			Dictionary<Entity, double> targets = new Dictionary<Entity, double>();
 
-			targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet)*1.5);
-			targets.Add(EmptyPlanet, ship.GetDistanceTo(EmptyPlanet));
-			targets.Add(DockedEnemy, ship.GetDistanceTo(DockedEnemy));
-			targets.Add(CloseEnemy, ship.GetDistanceTo(CloseEnemy)*1.5);
+			if (closestPlanet != null)
+				targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet) * 1.5);
+			if (emptyPlanet != null)
+				targets.Add(emptyPlanet, ship.GetDistanceTo(emptyPlanet));
+			if (dockedEnemy != null)
+				targets.Add(dockedEnemy, ship.GetDistanceTo(dockedEnemy));
+			if (closeEnemy != null)
+				targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 1.5);
 
 			return targets.OrderBy(kvp => kvp.Value).First().Key;
 		}
