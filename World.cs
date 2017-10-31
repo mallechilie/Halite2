@@ -26,6 +26,7 @@ namespace Halite2
 		public List<Move> DoTurn()
 		{
 			StartTurn();
+			bool skipDouble = gameMap.GetAllShips().Count(ship => ship.GetOwner()==gameMap.GetMyPlayerId()) < 30;
 			foreach (Ship ship in gameMap.GetMyPlayer().GetShips().Values)
 			{
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
@@ -35,7 +36,7 @@ namespace Halite2
 					continue;
 
 				if (Colonize(ship))
-					ColonizePlanet(ship, true);
+					ColonizePlanet(ship, skipDouble);
 				else
 					Fight(ship);
 			}
@@ -88,7 +89,7 @@ namespace Halite2
 					return;
 				}
 
-				if (skipDouble && gameMap.GetAllShips().Count<30 && gameMap.GetAllShips().Any(s => !Equals(ship, s) && s.GetOwner()==gameMap.GetMyPlayerId() && Equals(s.Target, planet) && s.GetDockingStatus()==Ship.DockingStatus.Undocked))
+				if (skipDouble && gameMap.GetAllShips().Any(s => !Equals(ship, s) && s.GetOwner()==gameMap.GetMyPlayerId() && Equals(s.Target, planet) && s.GetDockingStatus()==Ship.DockingStatus.Undocked))
 					continue;
 
 				ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
