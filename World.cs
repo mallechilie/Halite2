@@ -34,65 +34,108 @@ namespace Halite2
 				if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
 					continue;
 
-				if (Colonize(ship))
-					ColonizePlanet(ship);
-				else
-					Fight(ship);
+				Entity Target = FindTarget(ship);
+				switch (Target)
+				{
+					case Ship _:
+						Fight(ship, (Ship)Target);
+						break;
+					case Planet _:
+						ColonizePlanet(ship, (Planet)Target);
+						break;
+				}
 			}
 			return moveList;
 		}
 
-		private void Fight(Ship ship)
+		private void Fight(Ship ship, Ship target)
 		{
 			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId() && e.GetDockingStatus()!=Ship.DockingStatus.Undocked);
 			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
 				nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
 			Ship closeEnemy = nearEnemyShips.OrderBy(e => e.Key).First().Value;
+			closeEnemy = target;
+
 			ThrustMove moveEnemy = closeEnemy.GetDockingStatus() != Ship.DockingStatus.Undocked ?
 				                       Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1, 4) :
 				                       Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1);
 			moveList.Add(moveEnemy);
 		}
-		private bool Colonize(Ship ship)
+		private Entity FindTarget(Ship ship)
 		{
-			Dictionary<double, Planet> colonizable = gameMap.NearbyPlanetsByDistance(ship, 
-				planet => (planet.GetOwner() == gameMap.GetMyPlayerId() && !planet.IsFull()) || !planet.IsOwned());
-			if (colonizable == null || colonizable.Count == 0)
-				return false;
-			double closestPlanet = colonizable.Min(kvp => kvp.Key);
-			double closestShip = gameMap.NearbyShipsByDistance(ship, s => s.GetOwner() != gameMap.GetMyPlayerId()).Min(kvp => kvp.Key);
-			return closestPlanet < closestShip;
+			Planet closestPlanet = FindPlanet(ship);
+			Planet EmptyPlanet = FindEmptyPlanet(ship);
+			Ship DockedEnemy = FindDockedEnemy(ship);
+			Ship CloseEnemy = FindEnemy(ship);
+
+			Dictionary<Entity, double> targets = new Dictionary<Entity, double>();
+
+			targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet)*1.5);
+			targets.Add(EmptyPlanet, ship.GetDistanceTo(EmptyPlanet));
+			targets.Add(DockedEnemy, ship.GetDistanceTo(DockedEnemy));
+			targets.Add(CloseEnemy, ship.GetDistanceTo(CloseEnemy)*1.5);
+
+			return targets.OrderBy(kvp => kvp.Value).First().Key;
 		}
-		private void ColonizePlanet(Ship ship)
+		private Planet FindPlanet(Ship ship)
 		{
-			var planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			Dictionary<double, Planet> colonizable = gameMap.NearbyPlanetsByDistance(ship, planet => (planet.GetOwner() == gameMap.GetMyPlayerId() && !planet.IsFull()) || !planet.IsOwned());
+
+			if (colonizable == null || colonizable.Count == 0)
+				return null;
+
+			double closestPlanet = colonizable.Min(kvp => kvp.Key);
+			return colonizable[closestPlanet];
+		}
+		private Planet FindEmptyPlanet(Ship ship)
+		{
+			Dictionary<double, Planet> colonizable = gameMap.NearbyPlanetsByDistance(ship, planet => !planet.IsOwned());
+
+			if (colonizable == null || colonizable.Count == 0)
+				return null;
+
+			double closestPlanet = colonizable.Min(kvp => kvp.Key);
+			return colonizable[closestPlanet];
+		}
+		private Ship FindDockedEnemy(Ship ship)
+		{
+			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId() && e.GetDockingStatus() != Ship.DockingStatus.Undocked);
+			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
+				return null;
+			return nearEnemyShips.OrderBy(e => e.Key).First().Value;
+		}
+		private Ship FindEnemy(Ship ship)
+		{
+			Dictionary<double, Ship> nearEnemyShips = gameMap.NearbyShipsByDistance(ship, e => e.GetOwner() != gameMap.GetMyPlayerId());
+			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
+				return null;
+			return nearEnemyShips.OrderBy(e => e.Key).First().Value;
+		}
+		private void ColonizePlanet(Ship ship, Planet target)
+		{
+			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
 			//foreach (Planet planet in Planets)
 			for (int x = 0; x < planets.Length; x++)
 			{
 				Planet planet = planets[x];
 
 				if (planet.IsOwned() && planet.GetOwner() != gameMap.GetMyPlayerId())
-				{
 					continue;
-				}
 				if (planet.IsFull())
-				{
 					continue;
-				}
 
 				if (ship.CanDock(planet))
 				{
 					moveList.Add(new DockMove(ship, planet));
 					break;
 				}
-
-				ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
-				if (newThrustMove != null)
-				{
-					moveList.Add(newThrustMove);
+				if (Equals(planet, target))
 					break;
-				}
-
+			}
+			ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, target, Constants.MAX_SPEED);
+			if (newThrustMove != null)
+			{
+				moveList.Add(newThrustMove);
 			}
 		}
 		private void StartUndocking(Ship ship)
