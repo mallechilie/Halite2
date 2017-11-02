@@ -65,8 +65,11 @@ namespace Halite2.hlt
 		                                                         bool avoidObstacles, double safeZone, double safeZoneToTarget = 0,  Entity[] closeEntities = null)
 		{
 			if (closeEntities == null)
+			{
 				closeEntities =
-					gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToArray();
+					gameMap.NearbyPlanetsByDistance(ship).OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToArray();
+				closeEntities = closeEntities.Concat(gameMap.NearbyShipsByDistance(ship, s=>s.GetDockingStatus()!=Ship.DockingStatus.Undocked).OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value)).ToArray();
+			}
 			if (avoidObstacles)
 				for (int x = 0; x < closeEntities.Length; x++)
 				{
@@ -76,7 +79,16 @@ namespace Halite2.hlt
 					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone, 0,
 						closeEntities.Take(x + 1).ToArray());
 				}
+			if(closeEntities[closeEntities.Length-1] is Planet)
+				foreach (Ship s in closeEntities[closeEntities.Length - 1].DockedShips)
+				{
+					Position newPosition = Collision.CircleIntersectNewPoint(ship, target, s, safeZone);
+					if (Equals(newPosition, target))
+						continue;
+					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone, 0,
+					                                       closeEntities[closeEntities.Length - 1].DockedShips.ToArray());
 
+				}
 			return GoToTarget(ship, target, safeZoneToTarget);
 		} 
 

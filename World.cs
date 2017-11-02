@@ -27,20 +27,28 @@ namespace Halite2
 		{
 			StartTurn();
 			foreach (Ship ship in gameMap.GetMyPlayer().GetShips().Values)
-			{
-				if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
-					StartUndocking(ship);
-
-				if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
-					continue;
-
-				Entity target = FindTarget(ship);
-				if (target is Ship )
-					Fight(ship, (Ship) target);
-				else if (target is Planet)
-					ColonizePlanet(ship, (Planet) target);
-			}
+				ShipMove(ship);
 			return moveList;
+		}
+
+		private void StartTurn()
+		{
+			moveList.Clear();
+			gameMap.UpdateMap(Networking.ReadLineIntoMetadata());
+		}
+		private void ShipMove(Ship ship)
+		{
+			if (ship.GetDockingStatus() == Ship.DockingStatus.Docked)
+				StartUndocking(ship);
+
+			if (ship.GetDockingStatus() == Ship.DockingStatus.Docking || ship.GetDockingStatus() == Ship.DockingStatus.Undocking)
+				return;
+
+			Entity target = FindTarget(ship);
+			if (target is Ship)
+				Fight(ship, (Ship)target);
+			else if (target is Planet)
+				ColonizePlanet(ship, (Planet)target);
 		}
 
 		private void Fight(Ship ship, Ship target)
@@ -56,6 +64,39 @@ namespace Halite2
 				                       Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, closeEnemy, true, 1);
 			moveList.Add(moveEnemy);
 		}
+		private void ColonizePlanet(Ship ship, Planet target)
+		{
+			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			//foreach (Planet planet in Planets)
+			for (int x = 0; x < planets.Length; x++)
+			{
+				Planet planet = planets[x];
+
+				if (planet.IsOwned() && planet.GetOwner() != gameMap.GetMyPlayerId())
+					continue;
+				if (planet.IsFull())
+					continue;
+
+				if (ship.CanDock(planet))
+				{
+					moveList.Add(new DockMove(ship, planet));
+					return;
+				}
+				if (Equals(planet, target))
+					break;
+			}
+			ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, target, Constants.MAX_SPEED);
+			if (newThrustMove != null)
+			{
+				moveList.Add(newThrustMove);
+			}
+		}
+		private void StartUndocking(Ship ship)
+		{
+			if (false)
+				moveList.Add(new UndockMove(ship));
+		}
+
 		private Entity FindTarget(Ship ship)
 		{
 			Planet closestPlanet = FindPlanet(ship);
@@ -66,13 +107,13 @@ namespace Halite2
 			Dictionary<Entity, double> targets = new Dictionary<Entity, double>();
 
 			if (emptyPlanet != null )
-				targets.Add(emptyPlanet, ship.GetDistanceTo(emptyPlanet));
+				targets.Add(emptyPlanet, ship.GetDistanceTo(emptyPlanet) - 20);
 			if (closestPlanet != null&& !Equals(emptyPlanet, closestPlanet))
-				targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet) * 1.5);
+				targets.Add(closestPlanet, ship.GetDistanceTo(closestPlanet));
 			if (dockedEnemy != null)
 				targets.Add(dockedEnemy, ship.GetDistanceTo(dockedEnemy));
 			if (closeEnemy != null && !Equals(closeEnemy, dockedEnemy))
-					targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 1.5);
+				targets.Add(closeEnemy, ship.GetDistanceTo(closeEnemy) * 2 - 40);
 
 			return targets.OrderBy(kvp => kvp.Value).First().Key;
 		}
@@ -109,43 +150,6 @@ namespace Halite2
 			if (nearEnemyShips == null || nearEnemyShips.Count == 0)
 				return null;
 			return nearEnemyShips.OrderBy(e => e.Key).First().Value;
-		}
-		private void ColonizePlanet(Ship ship, Planet target)
-		{
-			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
-			//foreach (Planet planet in Planets)
-			for (int x = 0; x < planets.Length; x++)
-			{
-				Planet planet = planets[x];
-
-				if (planet.IsOwned() && planet.GetOwner() != gameMap.GetMyPlayerId())
-					continue;
-				if (planet.IsFull())
-					continue;
-
-				if (ship.CanDock(planet))
-				{
-					moveList.Add(new DockMove(ship, planet));
-					return;
-				}
-				if (Equals(planet, target))
-					break;
-			}
-			ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, target, Constants.MAX_SPEED);
-			if (newThrustMove != null)
-			{
-				moveList.Add(newThrustMove);
-			}
-		}
-		private void StartUndocking(Ship ship)
-		{
-			if (false)
-				moveList.Add(new UndockMove(ship));
-		}
-		private void StartTurn()
-		{
-			moveList.Clear();
-			gameMap.UpdateMap(Networking.ReadLineIntoMetadata());
 		}
 	}
 }
