@@ -6,13 +6,20 @@ using System.Threading.Tasks;
 
 namespace Halite2.hlt
 {
-	class Vector : Position 
+	public class Vector  
 	{
-		public Vector(double xPos, double yPos) : base(xPos, yPos)
+		public double xPos { get; private set; }
+		public double yPos { get; private set; }
+
+		public Vector(double xPos, double yPos)
 		{
+			this.xPos = xPos;
+			this.yPos = yPos;
 		}
-		public Vector(Position position) : base(position.GetXPos(), position.GetYPos())
+		public Vector(Position position)
 		{
+			xPos = position.GetXPos();
+			yPos = position.GetYPos();
 		}
 
 
@@ -27,31 +34,39 @@ namespace Halite2.hlt
 
 		public static Vector operator +(Vector a, Vector b)
 		{
-			return new Vector(a.GetXPos() + b.GetXPos(), a.GetYPos() + b.GetYPos());
+			return new Vector(a.xPos + b.xPos, a.yPos + b.yPos);
 		}
 		public static Vector operator -(Vector a, Vector b)
 		{
-			return new Vector(a.GetXPos() - b.GetXPos(), a.GetYPos() - b.GetYPos());
+			return new Vector(a.xPos - b.xPos, a.yPos - b.yPos);
 		}
 		public static Vector operator -(Vector a)
 		{
-			return new Vector(-a.GetXPos(), -a.GetYPos());
+			return new Vector(-a.xPos, -a.yPos);
 		}
 		public static double operator *(Vector a, Vector b)
 		{
-			return (a.GetXPos() * b.GetXPos() + a.GetYPos() * b.GetYPos());
+			return a.xPos * b.xPos + a.yPos * b.yPos;
 		}
 		public static Vector operator *(Vector a, double b)
 		{
-			return new Vector(a.GetXPos() * b, a.GetYPos() * b);
+			return new Vector(a.xPos * b, a.yPos * b);
 		}
 		public static Vector operator *(double b, Vector a)
 		{
-			return new Vector(a.GetXPos() * b, a.GetYPos() * b);
+			return new Vector(a.xPos * b, a.yPos * b);
 		}
 		public static Vector operator /(Vector a, double b)
 		{
-			return new Vector(a.GetXPos() / b, a.GetYPos() / b);
+			return new Vector(a.xPos / b, a.yPos / b);
+		}
+		public static implicit operator Position(Vector v)
+		{
+			return new Position(v.xPos,v.yPos);
+		}
+		public static explicit operator Vector(Position p)
+		{
+			return new Vector(p);
 		}
 	}
 }

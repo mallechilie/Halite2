@@ -4,12 +4,14 @@ namespace Halite2.hlt {
 
     public class Position {
 
-        private double xPos;
+		public Vector vector { get; private set; }
+		private double xPos;
         private double yPos;
 
         public Position(double xPos, double yPos) {
             this.xPos = xPos;
             this.yPos = yPos;
+			vector=new Vector(this);
         }
 
         public double GetXPos() {

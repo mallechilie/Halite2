@@ -5,6 +5,7 @@ using System.Linq;
 namespace Halite2.hlt {
 
     public class GameMap {
+		public int[] Ships { get; private set; }
         private int width, height;
         private int playerId;
         private List<Player> players;

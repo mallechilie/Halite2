@@ -42,7 +42,7 @@ namespace Halite2.hlt
 				double newTargetDy = Math.Sin(angleRad + angularStepRad) * distance;
 				Position newTarget = new Position(ship.GetXPos() + newTargetDx, ship.GetYPos() + newTargetDy);
 
-				return NavigateShipTowardsTarget(gameMap, ship, newTarget, maxThrust, true, (maxCorrections - 1), angularStepRad);
+				return NavigateShipTowardsTarget(gameMap, ship, newTarget, maxThrust, true, maxCorrections - 1, angularStepRad);
 			}
 
 			int thrust;

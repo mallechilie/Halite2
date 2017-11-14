@@ -1,7 +1,7 @@
-
-*.zip
-Halite2.zip
-*.zip
+Halite II Visualizer.app/
+bin/
+obj/
+*.hlt
 *.zip
 *.pdb
 *.exe

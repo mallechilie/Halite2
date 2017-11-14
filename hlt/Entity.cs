@@ -15,7 +15,6 @@ namespace Halite2.hlt
 			    return dockedShips;
 		    }
 	    }
-
 	    private int owner;
         private int id;
         private int health;
