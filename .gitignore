@@ -1,4 +1,9 @@
-
+*.exe
+*.hlt
 *.zip
-Halite2.zip
-*.zip
+*.log
+*.dll
+run_game.bat
+obj/
+bin/
+Halite II Visualizer.app/
