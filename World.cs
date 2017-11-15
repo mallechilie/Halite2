@@ -86,7 +86,7 @@ namespace Halite2
 					return;
 				}
 
-				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, true, 2, 4);
+				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, false, 2, 4);
 				if (newThrustMove != null)
 				{
 					moveList.Add(newThrustMove);

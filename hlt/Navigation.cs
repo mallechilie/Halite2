@@ -77,7 +77,7 @@ namespace Halite2.hlt
 						closeEntities.Take(x + 1).ToArray());
 				}
 
-			return GoToTarget(ship, target, safeZoneToTarget);
+			return GoToTarget(ship, ship.GetClosestPoint(target), safeZoneToTarget);
 		} 
 
 		public static ThrustMove GoToTarget(Ship ship, Position newPosition, double safeZone = 0, int minThrust = 0, int maxThrust = 7)
