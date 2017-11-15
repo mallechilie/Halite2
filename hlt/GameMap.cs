@@ -43,9 +43,12 @@ namespace Halite2.hlt {
             return playersUnmodifiable;
         }
 
-        public Player GetMyPlayer() => playersUnmodifiable[GetMyPlayerId()];
+        public Player GetMyPlayer()
+	    {
+		    return playersUnmodifiable[GetMyPlayerId()];
+	    }
 
-        public Ship GetShip(int playerId, int entityId) {
+	    public Ship GetShip(int playerId, int entityId) {
             return players[playerId].GetShip(entityId);
         }
 

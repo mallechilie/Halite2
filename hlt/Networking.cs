@@ -88,6 +88,7 @@ namespace Halite2.hlt
         {
             int myId = int.Parse(ReadLine());
             DebugLog.Initialize(new StreamWriter(String.Format("{0}_{1}.log", myId, botName)));
+			DebugLog.AddLog("msg");
 
             Metadata inputStringMapSize = ReadLineIntoMetadata();
             int width = int.Parse(inputStringMapSize.Pop());

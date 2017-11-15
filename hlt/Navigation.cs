@@ -66,7 +66,6 @@ namespace Halite2.hlt
 		{
 			if (closeEntities == null)
 			{
-
 				closeEntities =
 					gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToArray();
 			}
@@ -74,7 +73,7 @@ namespace Halite2.hlt
 				for (int x = 0; x < closeEntities.Length; x++)
 				{
 					Position newPosition = Collision.CircleIntersectNewPoint(ship, target, closeEntities[x], safeZone);
-					if (Equals(newPosition, target))
+					if (newPosition.GetDistanceTo(target)<=0)
 						continue;
 					return NavigateShipTowardsTargetCustom(gameMap, ship, newPosition, true, safeZone, 0,
 						closeEntities.Take(x + 1).ToArray());
