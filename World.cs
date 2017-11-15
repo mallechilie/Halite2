@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Halite2.hlt;
 
 namespace Halite2
@@ -88,7 +85,7 @@ namespace Halite2
 					return;
 				}
 
-				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, false, 2, 2);
+				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, true, 2, 2);
 				if (newThrustMove != null)
 				{
 					moveList.Add(newThrustMove);
