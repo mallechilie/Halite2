@@ -41,8 +41,9 @@ namespace Halite2.hlt {
             return Math.Atan2(dy, dx) + 2 * Math.PI;
         }
 
-        public Position GetClosestPoint(Position target) {
-            double radius = target.GetRadius() + Constants.MIN_DISTANCE_FOR_CLOSEST_POINT;
+        public Position GetClosestPoint(Position target)
+        {
+	        double radius = target.GetRadius();
             double angleRad = target.OrientTowardsInRad(this);
 
             double x = target.GetXPos() + radius * Math.Cos(angleRad);

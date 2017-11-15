@@ -55,18 +55,20 @@ namespace Halite2
 		}
 		private bool Colonize(Ship ship)
 		{
+			return true;
 			Dictionary<double, Planet> colonizable = gameMap.NearbyPlanetsByDistance(ship, 
 				planet => (planet.GetOwner() == gameMap.GetMyPlayerId() && !planet.IsFull()) || !planet.IsOwned());
 			if (colonizable == null || colonizable.Count == 0)
 				return false;
 			double closestPlanet = colonizable.Min(kvp => kvp.Key);
-			double closestShip = gameMap.NearbyShipsByDistance(ship, s => s.GetOwner() != gameMap.GetMyPlayerId()).Min(kvp => kvp.Key);
-			return closestPlanet < closestShip;
+			double closestEnemy = gameMap.NearbyShipsByDistance(ship, s => s.GetOwner() != gameMap.GetMyPlayerId()).Min(kvp => kvp.Key);
+			return closestPlanet < closestEnemy;
 		}
 		private void ColonizePlanet(Ship ship)
 		{
-			var planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
+			Planet[] planets = gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(p => p.Value).ToArray();
 			//foreach (Planet planet in Planets)
+			//{
 			for (int x = 0; x < planets.Length; x++)
 			{
 				Planet planet = planets[x];
@@ -86,7 +88,7 @@ namespace Halite2
 					return;
 				}
 
-				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, false, 2, 4);
+				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, false, 2, 2);
 				if (newThrustMove != null)
 				{
 					moveList.Add(newThrustMove);

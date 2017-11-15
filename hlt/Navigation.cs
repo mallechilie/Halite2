@@ -65,8 +65,11 @@ namespace Halite2.hlt
 		                                                         bool avoidObstacles, double safeZone, double safeZoneToTarget = 0,  Entity[] closeEntities = null)
 		{
 			if (closeEntities == null)
+			{
+
 				closeEntities =
 					gameMap.NearbyPlanetsByDistance(ship, e => true).OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToArray();
+			}
 			if (avoidObstacles)
 				for (int x = 0; x < closeEntities.Length; x++)
 				{
