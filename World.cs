@@ -83,14 +83,14 @@ namespace Halite2
 				if (ship.CanDock(planet))
 				{
 					moveList.Add(new DockMove(ship, planet));
-					break;
+					return;
 				}
 
-				ThrustMove newThrustMove = Navigation.NavigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
+				ThrustMove newThrustMove = Navigation.NavigateShipTowardsTargetCustom(gameMap, ship, planet, true, 2, 4);
 				if (newThrustMove != null)
 				{
 					moveList.Add(newThrustMove);
-					break;
+					return;
 				}
 
 			}
